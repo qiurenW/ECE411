@@ -1,0 +1,210 @@
+#include "Arduino.h"
+
+int temp_sensor = A0; // sensor pin
+int temp; //temperature value in Fahrenheit
+int x,y; //the two digit varialbles
+int backupValue;
+//setup pinmodes
+int motor = 11;
+int digit1 = 2;
+int digit2 = 3;
+int segA = 4;
+int segB = 5;
+int segC = 6;
+int segD = 7;
+int segE = 8;
+int segF = 9;
+int segG = 10;
+int refreshTime = 3000; //refresh every 30 seconds
+int count = 1;
+int boost_control = 1;
+void setup() {
+  Serial.begin(9600); //open serial port to commnunicate with the sensor
+  pinMode(temp_sensor, INPUT);
+  pinMode(motor, OUTPUT);
+ pinMode(digit1, OUTPUT);
+  pinMode(digit2, OUTPUT);
+  pinMode(segA, OUTPUT);
+  pinMode(segB, OUTPUT);
+  pinMode(segC, OUTPUT);
+  pinMode(segD, OUTPUT);
+  pinMode(segE, OUTPUT);
+  pinMode(segF, OUTPUT);
+  pinMode(segG, OUTPUT);
+
+}
+
+void loop() {
+    
+ //control the fan
+    if (count == 1)
+   {
+    temp = analogRead(temp_sensor); //read the analog value from the temp sensor
+    temp = ((temp*500/1024)*1.8)+32; //convert to Fahrenheit temp
+    backupValue = temp;
+    Serial.println((byte)temp); 
+    if (temp <= 65) //set the lower limit to turn the fan off
+  { temp = 65;}
+  else {if (temp >=90) //set the upper limit to turn the fan on 100%
+        { temp = 90;}
+        else {temp = temp;}}
+//control the speed of the fan using PWM
+ if (temp <= 65)    // turn the fan off
+  {analogWrite(motor, 0);
+   delay(5);}
+   
+ if ((temp > 65) && (temp <= 75))   //33% duty cycle: speed 1
+  {analogWrite(motor, 84);
+   delay(5);}
+
+ if ((temp > 75) && (temp <= 85))   //66% duty cycle: speed 2
+  {analogWrite(motor, 170);
+   delay(5);}
+
+ if (temp > 85)     //turn the fan all the way on
+  {analogWrite(motor, 225);
+   delay(5);}}
+    if (count > 0)
+    {    temp = backupValue;     
+// Display temp on the seven segs
+  if (temp <= 99){
+  x = temp/10;  //first digit
+  digitalWrite(digit1,  HIGH);
+  digitalWrite(digit2, LOW);
+  display(x);
+  delay(10);
+  y = temp-(x*10);  //second digit
+  digitalWrite(digit1, LOW);
+  digitalWrite(digit2, HIGH);
+  display(y);
+  delay(10);}
+  
+  if (temp > 99){
+      digitalWrite(digit1,  HIGH);
+      digitalWrite(digit2, LOW);
+      display(0);
+      delay(10);
+      digitalWrite(digit1, LOW);
+      digitalWrite(digit2, HIGH);
+      display (10);
+      delay(10);}}
+    //read value every 50 loops for 1 seconds
+  if (count > 50)
+  {count = 0;}
+    count = count + 1; 
+  }
+
+
+int display (int a)
+{ switch (a)
+  {
+    case 0:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, LOW);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, LOW);
+    digitalWrite(segE, LOW);
+    digitalWrite(segF, LOW);
+    digitalWrite(segG, HIGH);
+     break;
+
+    case 1:
+    digitalWrite(segA, HIGH);
+    digitalWrite(segB, LOW);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, HIGH);
+    digitalWrite(segE, HIGH);
+    digitalWrite(segF, HIGH);
+    digitalWrite(segG, HIGH);
+    break;
+
+    case 2:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, LOW);
+    digitalWrite(segC, HIGH);
+    digitalWrite(segD, LOW);
+    digitalWrite(segE, LOW);
+    digitalWrite(segF, HIGH);
+    digitalWrite(segG, LOW);
+    break;
+
+    case 3:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, LOW);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, LOW);
+    digitalWrite(segE, HIGH);
+    digitalWrite(segF, HIGH);
+    digitalWrite(segG, LOW);
+    break;
+
+    case 4:
+    digitalWrite(segA, HIGH);
+    digitalWrite(segB, LOW);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, HIGH);
+    digitalWrite(segE, HIGH);
+    digitalWrite(segF, LOW);
+    digitalWrite(segG, LOW);
+    break;
+
+    case 5:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, HIGH);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, LOW);
+    digitalWrite(segE, HIGH);
+    digitalWrite(segF, LOW);
+    digitalWrite(segG, LOW);
+    break;
+
+    case 6:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, HIGH);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, LOW);
+    digitalWrite(segE, LOW);
+    digitalWrite(segF, LOW);
+    digitalWrite(segG, LOW);
+    break;
+
+    case 7:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, LOW);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, HIGH);
+    digitalWrite(segE, HIGH);
+    digitalWrite(segF, HIGH);
+    digitalWrite(segG, HIGH);
+    break;
+
+    case 8:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, LOW);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, LOW);
+    digitalWrite(segE, LOW);
+    digitalWrite(segF, LOW);
+    digitalWrite(segG, LOW);
+     break;
+
+    case 9:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, LOW);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, LOW);
+    digitalWrite(segE, HIGH);
+    digitalWrite(segF, LOW);
+    digitalWrite(segG, LOW);
+    break;
+
+    case 111:
+    digitalWrite(segA, LOW);
+    digitalWrite(segB, HIGH);
+    digitalWrite(segC, LOW);
+    digitalWrite(segD, HIGH);
+    digitalWrite(segE, LOW);
+    digitalWrite(segF, HIGH);
+    digitalWrite(segG, HIGH);
+    break;    
+  }  }
