@@ -1,1 +1,6 @@
+This file is a describation of the whole project.
 
+The reason we don't use Solar Power 
+  1. If we connect Solar panel to PCB directly, this power supply is not stable. 
+  2. The pannel may not able to provide enough current for driving a motor.
+  3. If we use a li-battery to store the solar power, we need to design a power management system, which will make this project two complex.
