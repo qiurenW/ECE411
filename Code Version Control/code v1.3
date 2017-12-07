@@ -71,8 +71,17 @@ void loop() {
                    SEVEN SEGMENT DISPLAY
 **************************************************************/
   if (count > 0)
-    {temp = backupValue;     
-// Display temp on the seven segs
+  {temp = backupValue;     
+  if (temp > 99){
+      digitalWrite(digit1,  HIGH);
+      digitalWrite(digit2, LOW);
+      display(0);
+      delay(10);
+      digitalWrite(digit1, LOW);
+      digitalWrite(digit2, HIGH);
+      display (10);
+      delay(10);}
+      
   if (temp <= 99){
   x = temp/10;  //first digit
   digitalWrite(digit1,  HIGH);
@@ -83,17 +92,7 @@ void loop() {
   digitalWrite(digit1, LOW);
   digitalWrite(digit2, HIGH);
   display(y);
-  delay(10);}
-  
-  if (temp > 99){
-      digitalWrite(digit1,  HIGH);
-      digitalWrite(digit2, LOW);
-      display(0);
-      delay(10);
-      digitalWrite(digit1, LOW);
-      digitalWrite(digit2, HIGH);
-      display (10);
-      delay(10);}}
+  delay(10);}}
     //read value every 50 loops for 1 seconds
   if (count > 50)
   {count = 0;}
